@@ -67,14 +67,14 @@ namespace ConfigurationValidator
 			}
 
 			if (projConfig.GetDefineSymbols ().Any (symbol => symbol.Equals ("MAC", StringComparison.OrdinalIgnoreCase)) != shouldContainMac) {
-				var expected = shouldContainDebug ? "MAC" : "";
-				var actual = shouldContainDebug ? "" : "MAC";
+				var expected = shouldContainMac ? "MAC" : "";
+				var actual = shouldContainMac ? "" : "MAC";
 				LogIssue (project, "symbols", expected, actual);
 			}
 
 			if (projConfig.GetDefineSymbols ().Any (symbol => symbol.Equals ("WIN32", StringComparison.OrdinalIgnoreCase)) != shouldContainWin) {
-				var expected = shouldContainDebug ? "WIN32" : "";
-				var actual = shouldContainDebug ? "" : "WIN32";
+				var expected = shouldContainWin ? "WIN32" : "";
+				var actual = shouldContainWin ? "" : "WIN32";
 				LogIssue (project, "symbols", expected, actual);
 			}
 		}
