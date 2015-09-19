@@ -35,18 +35,19 @@ namespace ConfigurationValidator
 				return;
 
 			// Fixup entries for release configs.
-			IdeApp.Workspace.ActiveConfigurationId = currentConfig.Replace ("Release", "Debug");
-			var debugEntry = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration).GetEntryForItem (project);
-			bool build = debugEntry.Build;
-			bool deploy = debugEntry.Deploy;
-			string newConfig = debugEntry.ItemConfiguration.Replace ("Debug", "Release");
+			var debugEntry = project.ParentSolution
+				.GetConfiguration (new SolutionConfigurationSelector (currentConfig.Replace ("Release", "Debug")))
+				.GetEntryForItem (project);
+			if (debugEntry == null)
+				return;
+			
 			IdeApp.Workspace.ActiveConfigurationId = currentConfig;
 
-			var solConfig = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration);
-			var entry = solConfig.GetEntryForItem (project);
-			entry.Build = build;
-			entry.Deploy = deploy;
+			var entry = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration).GetEntryForItem (project);
+			entry.Build = debugEntry.Build;
+			entry.Deploy = debugEntry.Deploy;
 
+			var newConfig = debugEntry.ItemConfiguration.Replace ("Debug", "Release");
 			if (project.GetConfigurations ().Any (config => config == newConfig))
 				entry.ItemConfiguration = newConfig;
 			else
