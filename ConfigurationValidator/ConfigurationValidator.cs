@@ -99,7 +99,7 @@ namespace ConfigurationValidator
 			var args = projConfig.CompilationParameters as MonoDevelop.CSharp.Project.CSharpCompilerParameters;
 			if (args == null)
 				return;
-
+			
 			if (!debugTypeValues.Any (value => value.Equals (args.DebugType, StringComparison.OrdinalIgnoreCase))) {
 				LogIssue (project, "DebugType", debugTypeValues.First (), args.DebugType);
 				args.DebugType = debugTypeValues.First ();
@@ -122,7 +122,6 @@ namespace ConfigurationValidator
 			projConfig.SignAssembly = debugConfig.SignAssembly;
 			projConfig.CommandLineParameters = debugConfig.CommandLineParameters;
 			projConfig.ExternalConsole = debugConfig.ExternalConsole;
-			projConfig.IntermediateOutputDirectory = debugConfig.IntermediateOutputDirectory;
 			projConfig.OutputDirectory = debugConfig.OutputDirectory;
 			projConfig.RunWithWarnings = debugConfig.RunWithWarnings;
 			projConfig.PauseConsoleOutput = debugConfig.PauseConsoleOutput;
