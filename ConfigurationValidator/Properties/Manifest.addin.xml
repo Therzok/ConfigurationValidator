@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionModel>
+	<Runtime>
+	</Runtime>
+	<Extension path="/MonoDevelop/Ide/Commands">
+		<Command id="ConfigurationValidator.Commands.Validate"
+				_label = "Validate Configurations"
+				defaultHandler = "ConfigurationValidator.ConfigurationValidatorHandler"/>
+	</Extension>
+	<Extension path="/MonoDevelop/Ide/MainMenu/Tools">
+		<CommandItem id="ConfigurationValidator.Commands.Validate" />
+	</Extension>
+</ExtensionModel>
