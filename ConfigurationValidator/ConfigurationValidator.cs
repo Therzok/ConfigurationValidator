@@ -50,8 +50,10 @@ namespace ConfigurationValidator
 			var newConfig = debugEntry.ItemConfiguration.Replace ("Debug", "Release");
 			if (project.GetConfigurations ().Any (config => config == newConfig))
 				entry.ItemConfiguration = newConfig;
-			else
+			else {
+				LogIssue (project, "configuration", newConfig, "Missing");
 				entry.ItemConfiguration = debugEntry.ItemConfiguration;
+			}
 		}
 
 		static void CheckDefineSymbols (DotNetProject project)
@@ -109,6 +111,37 @@ namespace ConfigurationValidator
 				args.Optimize = shouldBeOptimized;
 				shouldSave = true;
 			}
+
+			if (isDebug)
+				return;
+
+			// Fixup to release properties.
+			var debugConfig = (DotNetProjectConfiguration)project.GetConfiguration (new ItemConfigurationSelector (projConfig.Name.Replace ("Release", "Debug")));
+			projConfig.DelaySign = debugConfig.DelaySign;
+			projConfig.OutputAssembly = debugConfig.OutputAssembly;
+			projConfig.SignAssembly = debugConfig.SignAssembly;
+			projConfig.CommandLineParameters = debugConfig.CommandLineParameters;
+			projConfig.ExternalConsole = debugConfig.ExternalConsole;
+			projConfig.IntermediateOutputDirectory = debugConfig.IntermediateOutputDirectory;
+			projConfig.OutputDirectory = debugConfig.OutputDirectory;
+			projConfig.RunWithWarnings = debugConfig.RunWithWarnings;
+			projConfig.PauseConsoleOutput = debugConfig.PauseConsoleOutput;
+
+			var debugArgs = debugConfig.CompilationParameters as MonoDevelop.CSharp.Project.CSharpCompilerParameters;
+			if (debugArgs == null)
+				return;
+
+			args.DefineSymbols = debugArgs.DefineSymbols.Replace ("DEBUG", "").Trim(',', ';').Replace(",,", "").Replace(";;", "");
+			args.DocumentationFile = debugArgs.DocumentationFile;
+			args.GenerateOverflowChecks = debugArgs.GenerateOverflowChecks;
+			args.LangVersion = debugArgs.LangVersion;
+			args.NoStdLib = debugArgs.NoStdLib;
+			args.NoWarnings = debugArgs.NoWarnings;
+			args.TreatWarningsAsErrors = debugArgs.TreatWarningsAsErrors;
+			args.PlatformTarget = debugArgs.PlatformTarget;
+			args.UnsafeCode = debugArgs.UnsafeCode;
+			args.WarningLevel = debugArgs.WarningLevel;
+			args.WarningsNotAsErrors = debugArgs.WarningsNotAsErrors;
 		}
 
 		protected override void Run ()
