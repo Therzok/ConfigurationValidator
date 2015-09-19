@@ -35,14 +35,22 @@ namespace ConfigurationValidator
 				return;
 
 			// Fixup entries for release configs.
+			IdeApp.Workspace.ActiveConfigurationId = currentConfig.Replace ("Release", "Debug");
+			var debugEntry = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration).GetEntryForItem (project);
+			bool build = debugEntry.Build;
+			bool deploy = debugEntry.Deploy;
+			string newConfig = debugEntry.ItemConfiguration.Replace ("Debug", "Release");
+			IdeApp.Workspace.ActiveConfigurationId = currentConfig;
+
 			var solConfig = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration);
 			var entry = solConfig.GetEntryForItem (project);
-			IdeApp.Workspace.ActiveConfigurationId = currentConfig.Replace ("Debug", "Release");
-			var debugEntry = project.ParentSolution.GetConfiguration (IdeApp.Workspace.ActiveConfiguration).GetEntryForItem (project);
-			IdeApp.Workspace.ActiveConfigurationId = currentConfig;
-			entry.Build = debugEntry.Build;
-			entry.Deploy = debugEntry.Deploy;
-			entry.ItemConfiguration = debugEntry.ItemConfiguration.Replace ("Debug", "Release");
+			entry.Build = build;
+			entry.Deploy = deploy;
+
+			if (project.GetConfigurations ().Any (config => config == newConfig))
+				entry.ItemConfiguration = newConfig;
+			else
+				entry.ItemConfiguration = debugEntry.ItemConfiguration;
 		}
 
 		static void CheckDefineSymbols (DotNetProject project)
