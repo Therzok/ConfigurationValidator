@@ -130,7 +130,7 @@ namespace ConfigurationValidator
 			if (debugArgs == null)
 				return;
 
-			args.DefineSymbols = debugArgs.DefineSymbols.Replace ("DEBUG", "").Trim(',', ';').Replace(",,", "").Replace(";;", "");
+			args.DefineSymbols = debugArgs.DefineSymbols.Replace ("DEBUG", "").Trim(',', ';').Replace(",,", ",").Replace(";;", ";");
 			args.DocumentationFile = debugArgs.DocumentationFile;
 			args.GenerateOverflowChecks = debugArgs.GenerateOverflowChecks;
 			args.LangVersion = debugArgs.LangVersion;
